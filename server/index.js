@@ -2,14 +2,15 @@ const express = require("express");
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { Pool } = require("pg");
+const jwt = require('jsonwebtoken');
+
 const db = new Pool ({
     user: 'sumbhav',
     host: 'localhost',
     database: 'userlogin',
     password: 'password',
     port: 5432,
-})
-
+}) // db connection
 
 const app = express();
 
@@ -46,8 +47,13 @@ app.post("/login", async(req, res) => {
         if (!passwordCheck) {
             return res.status(400).json({message : "invalid password"});
         }
+        const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, 'your_jwt_secret_key', { expiresIn: '1h' });
 
-        res.json({ message: "Login successfull", user: { id: user.id, name: user.name, email: user.email }});
+        res.json({
+            message: "Login successful",
+            token,  // send token for session verification
+            user: { id: user.id, name: user.name, email: user.email }
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({message : "server error"});

@@ -1,26 +1,41 @@
 import React, { useState } from "react";
 import SyncLife from "../assets/images/SyncLife.png";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState(""); 
   const [error, setError] = useState(""); 
   const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setError("");
+    setLoading(true); 
 
     try {
       const response = await axios.post("http://localhost:5000/login", {
         email: email,
         password: password,
       });
+      console.log(response.data)
 
       if (response.status === 200) {
         console.log("Login successful");
+
+        alert(response.data.message) // test line, should actually redirect to dashboard
+        localStorage.setItem("user", JSON.stringify(response.data.user)); 
+        localStorage.setItem("token", response.data.token); //session token
+        window.location.reload()
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 100); 
+        
+      } else {
+        setError("Unexpected error occurred. Please try again.");
       }
     } catch (err) {
       setError("Invalid email or password."); 
@@ -73,7 +88,7 @@ const LoginPage = () => {
 
         <p className="mt-4 text-sm">
           New user?{" "}
-          <a href="/signup" className="text-blue-600 font-semibold underline">
+          <a href="/sign-up" className="text-blue-600 font-semibold underline">
             Sign up here
           </a>
         </p>

@@ -53,7 +53,7 @@ const SignUp = () => {
 
         <p className="mt-4 text-sm">
           Back to login?{" "}
-          <a href="#" className="text-blue-600 font-semibold underline">
+          <a href="/" className="text-blue-600 font-semibold underline">
             Go Back
           </a>
         </p>
