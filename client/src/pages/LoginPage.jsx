@@ -25,13 +25,18 @@ const LoginPage = () => {
 
       if (response.status === 200) {
         console.log("Login successful");
+        const user = response.data.user;
 
         alert(response.data.message) // test line, should actually redirect to dashboard
         localStorage.setItem("user", JSON.stringify(response.data.user)); 
         localStorage.setItem("token", response.data.token); //session token
-        window.location.reload()
+
         setTimeout(() => {
-          navigate('/dashboard');
+          if (user.settings_finished){
+            navigate('/dashboard');
+          }else {
+            navigate('/settings');
+          };
         }, 100); 
         
       } else {

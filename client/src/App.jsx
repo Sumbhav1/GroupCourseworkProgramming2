@@ -1,24 +1,32 @@
-import LoginPage from "./pages/LoginPage";
-import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
 
 function App() {
-  const token = localStorage.getItem("token"); //get user token
-
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route exact path="/" element={token ? <Navigate to="/dashboard" /> : <LoginPage />} />
-        <Route exact path="/sign-up" element={<SignUp />} />
-        <Route 
-          path="/dashboard" 
-          element={token ? <Dashboard /> : <Navigate to="/" />} 
-        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/" element={<Navigate to="/login" />} />  {/* Redirect to login if visiting root */}
+
+        {/* Accessible only if logged in AND settings not finished */}
+        <Route element={<ProtectedRoute requireSettingsComplete={false} />}>
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
+        {/* Accessible only if logged in AND settings are finished */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
 export default App;
+
+
