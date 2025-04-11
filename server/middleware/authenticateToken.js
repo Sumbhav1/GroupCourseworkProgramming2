@@ -1,17 +1,23 @@
-
 const jwt = require("jsonwebtoken");
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // 'Bearer token_here'
+  
 
-  if (!token) return res.sendStatus(401);
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Access token missing or malformed" });
+  }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; 
     next();
-  });
+  } catch (err) {
+    console.error("Token verification failed:", err.message);
+    return res.status(403).json({ error: "Invalid or expired token" });
+  }
 }
 
 module.exports = authenticateToken;
