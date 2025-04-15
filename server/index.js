@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require("pg");
 const jwt = require('jsonwebtoken');
 const authenticateToken = require('./middleware/authenticateToken');
+require('dotenv').config();
 
 const db = new Pool ({
     user: 'sumbhav',
@@ -96,7 +97,7 @@ app.post("/settings", authenticateToken, async(req, res) => {
     const { calories, bedtime, wakeupTime, hoursSleep, mealsDay, notificationsSleep, notififcationsMeals} = req.body;
     const userId = req.user.id;
     try {
-        const existing = await db.query("SELECT * FROM user_settings WHERE user_id = $1", [userId]);
+        const existing = await db.query(`SELECT * FROM user_settings WHERE user_id = $1`, [userId]);
 
         if (existing.rows.length > 0){
             await db.query(
@@ -124,7 +125,7 @@ app.post("/settings", authenticateToken, async(req, res) => {
 app.get("/settings", authenticateToken, async (req, res) => {
     const userId = req.user.id;
     try {
-        const result = await db.query("SELECT * FROM user_settings WHERE user_id = $1", [userId]);
+        const result = await db.query(`SELECT * FROM user_settings WHERE user_id = $1`, [userId]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ message: "Settings not found" });

@@ -1,7 +1,8 @@
 
 import { AuthContext } from "../components/AuthContext";
 import axios from "axios";
-import { useEffect, useContext, useState, useNavigate } from "react";
+import { useEffect, useContext, useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const [error, setError] = useState("");
@@ -25,6 +26,8 @@ const Settings = () => {
       navigate("/login");
       return;
     }
+    console.log(token);
+    
   
     const fetchSettings = async () => {
       try {

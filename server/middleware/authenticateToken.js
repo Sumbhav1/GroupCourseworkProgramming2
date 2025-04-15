@@ -2,13 +2,11 @@ const jwt = require("jsonwebtoken");
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // 'Bearer token_here'
+
+  console.log(process.env.JWT_SECRET);
   
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Access token missing or malformed" });
-  }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
