@@ -1,7 +1,6 @@
-
 import { AuthContext } from "../components/AuthContext";
 import axios from "axios";
-import { useEffect, useContext, useState} from "react";
+import { useEffect, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
@@ -17,17 +16,17 @@ const Settings = () => {
   const [notificationsMeals, setNotificationsMeals] = useState("No");
   const navigate = useNavigate();
 
-  const { user } = useContext(AuthContext);
+  const { user, setUser} = useContext(AuthContext);
 
   const token = localStorage.getItem("token");
-
+  
   useEffect(() => {
     if (!token) {
+      console.log("token not available",);
       navigate("/login");
       return;
     }
-    console.log(token);
-    
+
   
     const fetchSettings = async () => {
       try {
@@ -55,35 +54,50 @@ const Settings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("")
+    setError("");
     setLoading(true);
-
-    if (!calories || !sleep || !bedtime || !wakeupTime || !meals || !notificationsSleep || !notificationsMeals) {
+  
+    if (!calories || !sleep || !bedtime || !wakeupTime || !meals) {
       setError("All fields must be filled out");
       setLoading(false);
       return;
     }
-
+  
     try {
-      const response = await axios.post("http://localhost:5000/settings", {
-        calories, sleep, bedtime, wakeupTime, meals, notificationsSleep, notificationsMeals,
-      },   {headers: {
-        Authorization: `Bearer ${token}`
-      }})
-      console.log(response);
-
-      if (response.status == 200){
-        console.log("settings saved successfully");
+      const response = await axios.post(
+        "http://localhost:5000/settings",
+        {
+          calories,
+          bedtime,
+          wakeupTime,
+          sleep,
+          meals,
+          notificationsSleep: notificationsSleep === "Yes",
+          notificationsMeals: notificationsMeals === "Yes",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        setUser(response.data.user);
         alert("Settings saved successfully!");
-        navigate('/dashboard');
+        if (response.data.user.settings_finished) {
+          navigate("/dashboard");
+        } else {
+          navigate("/settings");
+        }
       }
-
-    } catch (err){
-      setError("unable to save settings");
+    } catch (err) {
+      console.error("API request failed", err);
+      setError("Unable to save settings. Please try again.");
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="flex items-center justify-center h-screen bg-blue-300">
       <div className="bg-blue-200 p-10 rounded-lg shadow-lg w-96 text-center max-h-screen overflow-auto">
@@ -226,5 +240,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
-
