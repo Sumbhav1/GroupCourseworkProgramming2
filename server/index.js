@@ -205,3 +205,27 @@ app.get("/settings", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+
+app.get("/dahsboard", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  try {
+      const resultSettings = await db.query("SELECT * FROM user_settings WHERE user_id = $1", [userId]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Settings not found" });
+      }
+      const settings = result.rows[0];
+      const bedtime = resultSettings.bedtime;
+      const calories_per_day = resultSettings.calories_per_day;
+      const wakeupTime = resultSettings.wakeup_time
+
+      const today = new Date().toISOString().split("T")[0];
+      const resultDaily = await db.query("SELECT * FROM daily_logs WHERE user_id = $1",)
+
+  } catch (err) {
+      console.error("Error fetching data:", err);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+

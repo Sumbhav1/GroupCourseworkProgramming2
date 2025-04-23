@@ -41,7 +41,7 @@ const SignUp = () => {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:5000/sign-up", {
+      const response = await axios.post("http://localhost:5001/auth/signup", {
         name,
         email,
         password,
