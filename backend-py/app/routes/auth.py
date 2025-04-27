@@ -53,7 +53,7 @@ def signup():
     name = data.get("name")
     password = data.get("password")
 
-    user = User().signupUser(name, email, password, )
+    user = User().signupUser(name, email, password)
 
     if user:
         JWT_SECRET = Config.JWT_SECRET

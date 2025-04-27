@@ -30,7 +30,7 @@ const Settings = () => {
   
     const fetchSettings = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/settings", {
+        const response = await axios.get("http://localhost:5001/settings/fetch", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -65,7 +65,7 @@ const Settings = () => {
   
     try {
       const response = await axios.post(
-        "http://localhost:5000/settings",
+        "http://localhost:5001/settings/set",
         {
           calories,
           bedtime,
