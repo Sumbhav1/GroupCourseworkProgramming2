@@ -1,13 +1,23 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sync Life</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+<form class="meal-form" action="save_meal.php" method="POST">
+    <h2>Add Your Meal</h2>
+
+    <label for="meal-time">Time of Meal</label>
+    <input type="time" id="meal-time" name="meal_time" required>
+
+    <label for="meal-type">What You Had</label>
+    <select id="meal-type" name="meal_type" required>
+        <option value="">Select...</option>
+        <option value="chicken">Chicken</option>
+        <option value="meat">Meat</option>
+        <option value="rice">Rice</option>
+        <option value="pasta">Pasta</option>
+        <option value="fish">Fish</option>
+        <option value="salad">Salad</option>
+        <option value="other">Other</option>
+    </select>
+
+    <label for="details">Other Details</label>
+    <textarea id="details" name="details" placeholder="e.g., sauce, portion size, drinks..." rows="3"></textarea>
+
+    <button type="submit">Submit</button>
+</form>
