@@ -4,3 +4,4 @@ requests
 bcrypt
 python-dotenv
 PyJWT
+psycopg2-binary
