@@ -48,7 +48,8 @@ const Settings = () => {
         console.error("Could not fetch settings");
       }
     };
-  
+    console.log(user);
+    
     fetchSettings();
   }, [token, navigate]);
 
@@ -97,7 +98,7 @@ const Settings = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="flex items-center justify-center h-screen bg-blue-300">
       <div className="bg-blue-200 p-10 rounded-lg shadow-lg w-96 text-center max-h-screen overflow-auto">

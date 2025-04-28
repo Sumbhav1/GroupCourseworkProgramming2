@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
+import AddAMeal from './pages/AddAMeal';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         {/* Accessible only if logged in AND settings are finished */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/add-a-meal" element={<AddAMeal />} />
         </Route>
       </Routes>
     </Router>

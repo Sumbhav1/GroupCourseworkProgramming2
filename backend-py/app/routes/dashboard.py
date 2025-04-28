@@ -13,7 +13,17 @@ def fetchDashboard():
     except Exception as e:
         return jsonify({"error": str(e)}), 401
     
-    user = User.find_by_email(email)
+    user = User().find_by_email(email)
+    if user: 
+        settings = user.getSettings()
+        if settings:
+            caloriesNeeded = settings['calories']
+            mealsNeeded = settings['meals']
+        else: return jsonify({"message": "couldnt find user settings"}), 404
+        dailyData = user.getDailyLog()
+
+
+        
 
     
 
