@@ -9,8 +9,17 @@ def create_app():
 
     from .routes.auth import auth_bp
     from .routes.settings import settings_bp
+    from .routes.AddMeals import meal_bp
+    from .routes.AddSleep import sleep_bp
+    from .routes.dashboard import dashboard_bp
+    from .routes.setMood import mood_bp
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(settings_bp)
+    app.register_blueprint(meal_bp)
+    app.register_blueprint(sleep_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(mood_bp)
 
     return app
 

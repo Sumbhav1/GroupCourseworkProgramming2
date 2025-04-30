@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SyncLife from "../assets/images/SyncLife.png";
-import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddAMeal = () => {
-  const { token } = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const [ingredientInput, setIngredientInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [mealIngredients, setMealIngredients] = useState([]);
   const [totalCalories, setTotalCalories] = useState(0);
-  const [weight, setWeight] = useState(100);
+  const [weight, setWeight] = useState();
   const [error, setError] = useState("");
-  const apiKey = import.meta.env.SPOONACULAR_KEY;
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const apiKey = import.meta.env.VITE_SPOONACULAR_KEY;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const AddAMeal = () => {
       navigate("/login");
       return;
     }
-  });
+  }, [token, navigate]);
 
   const searchIngredient = async () => {
     try {
@@ -50,7 +50,7 @@ const AddAMeal = () => {
           params: {
             amount: weight, // User-provided weight
             unit: "g",
-            apiKey: import.meta.env.VITE_SPOONACULAR_API_KEY,
+            apiKey: apiKey,
           },
         }
       );
@@ -66,14 +66,69 @@ const AddAMeal = () => {
       setTotalCalories((prev) => prev + ingredientWithCalories.calories);
       setSearchResults([]);
       setIngredientInput("");
-      setWeight(100); 
+      setWeight(100);
     } catch (err) {
       console.error(err);
       setError("Failed to fetch ingredient information.");
     }
   };
+
+  const handleMeal = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("No token found!");
+        navigate("/login");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:5001/meals/add",
+        {
+          total_calories: totalCalories,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setSuccessMessage("Meal added successfully!"); // Set success message
+        setTimeout(() => setSuccessMessage(""), 3000); // Clear the message after 3 seconds
+      }
+    } catch (err) {
+      console.error("Could not add meal:", err);
+      setError("Failed to add meal.");
+    }
+  };
+
+  const removeIngredientFromMeal = (ingredientIndex) => {
+    const updatedMealIngredients = [...mealIngredients];
+    const removedIngredient = updatedMealIngredients.splice(
+      ingredientIndex,
+      1
+    )[0];
+
+    setMealIngredients(updatedMealIngredients);
+    setTotalCalories((prev) => prev - removedIngredient.calories);
+  };
+
+  // Back button navigation handler
+  const goBack = () => {
+    navigate("/dashboard"); // Replace "/dashboard" with the actual route of the dashboard page
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-blue-300">
+    <div className="relative flex items-center justify-center min-h-screen bg-blue-300">
+      <button
+        onClick={goBack}
+        className="absolute top-4 left-4 text-white text-2xl bg-transparent hover:bg-gray-600 p-2 rounded-full"
+      >
+        &#8592; 
+      </button>
+
       <div className="bg-blue-200 p-10 rounded-lg shadow-lg w-96 text-center">
         <div className="flex justify-center mb-5">
           <img
@@ -85,6 +140,7 @@ const AddAMeal = () => {
         <p className="mt-2 text-lg font-medium">Add a Meal</p>
 
         {error && <p className="text-red-500">{error}</p>}
+        {successMessage && <p className="text-green-500">{successMessage}</p>} {/* Success message */}
 
         <div className="mt-4 space-y-4">
           <input
@@ -131,8 +187,19 @@ const AddAMeal = () => {
           <h3 className="font-semibold">Meal Ingredients:</h3>
           <ul className="mt-2 space-y-1">
             {mealIngredients.map((item, index) => (
-              <li key={index} className="text-sm">
-                {item.name} - {item.calories.toFixed(0)} kcal
+              <li
+                key={index}
+                className="flex justify-between items-center text-sm"
+              >
+                <span>
+                  {item.name} - {item.calories.toFixed(0)} kcal
+                </span>
+                <button
+                  onClick={() => removeIngredientFromMeal(index)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  X
+                </button>
               </li>
             ))}
           </ul>
@@ -140,6 +207,12 @@ const AddAMeal = () => {
           <div className="mt-4 font-bold">
             Total Calories: {totalCalories.toFixed(0)} kcal
           </div>
+          <button
+            onClick={handleMeal}
+            className="w-full mt-4 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+          >
+            Add Meal
+          </button>
         </div>
       </div>
     </div>
@@ -147,3 +220,4 @@ const AddAMeal = () => {
 };
 
 export default AddAMeal;
+
